@@ -1,6 +1,6 @@
 {
   "name": "terminal-playground",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "description": "Transpile Javascript and Typescript on the fly",
   "main": "index.js",
   "bin": "bin/terminal-playground.js",
