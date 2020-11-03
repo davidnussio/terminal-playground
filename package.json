@@ -1,0 +1,51 @@
+{
+  "name": "terminal-playground",
+  "version": "0.0.1",
+  "description": "Transpile Javascript and Typescript on the fly",
+  "main": "index.js",
+  "bin": "bin/terminal-playground.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidnussio/terminal-playground.git"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "esbuild",
+    "playground"
+  ],
+  "author": "David Nussio",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davidnussio/terminal-playground/issues"
+  },
+  "homepage": "https://github.com/davidnussio/terminal-playground#readme",
+  "dependencies": {
+    "chokidar": "3.4.3",
+    "crocks": "0.12.4",
+    "esbuild": "0.8.2",
+    "execa": "4.1.0",
+    "ora": "5.1.0",
+    "terminal-kit": "1.44.0"
+  },
+  "devDependencies": {
+    "eslint": "7.12.1",
+    "eslint-config-airbnb-base": "14.2.0",
+    "eslint-config-prettier": "6.15.0",
+    "eslint-plugin-import": "2.22.1",
+    "husky": "4.3.0",
+    "lint-staged": "10.5.1",
+    "prettier": "2.1.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
+}
