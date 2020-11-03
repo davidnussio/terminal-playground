@@ -56,12 +56,13 @@ const installMissingDeps = async (err) => {
   return new Promise((res) => {
     const m = err.match(/Cannot find module '(.+)'/);
     if (m.length > 1) {
-      term("Do you want install '").bold(m[1])("'? [Y|n]\n");
+      const missingModuleName = m[1].replace(/\/.*$/, "");
+      term("Do you want install '").bold(missingModuleName)("'? [Y|n]\n");
       term.yesOrNo({ yes: ["y", "ENTER"], no: ["n"] }, (error, result) => {
         if (result) {
           // const spinner = ora("Installing missing dependency...\n").start();
           term("Installing missing dependency...\n\n");
-          const subprocess = execa("npm", ["install", m[1]]);
+          const subprocess = execa("npm", ["install", missingModuleName]);
           // subprocess.stdout.on("data", term);
           subprocess.stdout.on("end", () => {
             // spinner.succeed();
