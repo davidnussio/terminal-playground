@@ -5,6 +5,7 @@
   "main": "index.js",
   "bin": "bin/terminal-playground.js",
   "scripts": {
+    "build": "node internals/build.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
