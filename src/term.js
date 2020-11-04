@@ -3,6 +3,7 @@ const path = require("path");
 const termkit = require("terminal-kit");
 const compose = require("crocks/helpers/compose");
 const tap = require("crocks/helpers/tap");
+const { statSync } = require("fs");
 const fileInput = require("./fileInput");
 const createRunner = require("./runner");
 
@@ -21,7 +22,7 @@ const main = async (options) => {
 
   const header = (opts) => {
     term.moveTo(1, 1);
-    term.bgRed("🔥 Fast terminal playground 🔥\n\n");
+    term.bgRed("🔥 Terminal playground 🔥\n\n");
     return opts;
   };
 
@@ -37,18 +38,27 @@ const main = async (options) => {
     return opts;
   };
 
-  const currentFile = (baseDirPath, currentFilePath) => (opts) => {
+  const currentFile = (baseDirPath, currentFilePath, isFile) => (
+    opts = { running: false, path: undefined }
+  ) => {
     // if (opts === true) {
     //   term.spinner("dotSpinner");
     // }
-    term("Running file: ").bold(
+    term(isFile ? "Running file: " : "Watching directory: ").bold(
       `${currentFilePath.replace(`${baseDirPath}/`, "")}\n\n`
     );
+
+    if (isFile === false && opts.path) {
+      term("Executed '").bold(opts.path.replace(`${baseDirPath}/`, ""))(
+        "' file.\n\n"
+      );
+    }
+
     return opts;
   };
 
   const chooseFile = (callback) => () => {
-    term("Choose a file: ");
+    term("Choose a file or directory: ");
 
     fileInput(
       {
@@ -76,12 +86,14 @@ const main = async (options) => {
     }
     switch (true) {
       case state.current === RUNNING:
+        const isFile = statSync(state.running.file).isFile();
         const runningScreen = compose(
-          currentFile(options.baseDir, state.running.file),
+          currentFile(options.baseDir, state.running.file, isFile),
           menu,
           header,
           tap(term.clear)
         );
+        runningScreen();
         currentRunner = runner(runningScreen, state.running.file);
         return;
 

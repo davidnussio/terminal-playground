@@ -24,11 +24,11 @@
 	SOFTWARE.
 */
 const termkit = require("terminal-kit");
-const autoComplete = termkit.autoComplete;
+
+const { autoComplete } = termkit;
 const term = termkit.terminal;
 const fs = require("fs");
 const path = require("path");
-const { resolve } = require("path");
 
 /*
 	/!\ Document that!!! /!\
@@ -42,8 +42,8 @@ function fileInput(options, callback) {
     options = {};
   }
 
-  var baseDir;
-  var promise = Promise.resolve();
+  let baseDir;
+  const promise = Promise.resolve();
 
   if (options.baseDir) {
     baseDir = path.resolve(options.baseDir);
@@ -79,7 +79,7 @@ function fileInput(options, callback) {
         );
       });
 
-      return Promise;
+      return promise;
     }
   } else {
     baseDir = process.cwd();
@@ -89,15 +89,19 @@ function fileInput(options, callback) {
     baseDir += "/";
   }
 
-  var autoCompleter = async function autoCompleter(inputString) {
-    var inputDir, inputFile, currentDir, files, completion;
+  const autoCompleter = async function autoCompleter(inputString) {
+    let inputDir;
+    let inputFile;
+    let currentDir;
+    let files;
+    let completion;
 
     if (inputString[inputString.length - 1] === "/") {
       inputDir = inputString;
       inputFile = "";
     } else {
       inputDir = path.dirname(inputString);
-      inputDir = inputDir === "." ? "" : inputDir + "/";
+      inputDir = inputDir === "." ? "" : `${inputDir}/`;
       inputFile = path.basename(inputString);
     }
 
@@ -108,7 +112,7 @@ function fileInput(options, callback) {
       currentDir = baseDir + inputDir;
     }
 
-    //console.error( "### '" + inputDir +"' '"+ inputFile +"' '"+ currentDir + "'" ) ;
+    // console.error( "### '" + inputDir +"' '"+ inputFile +"' '"+ currentDir + "'" ) ;
     try {
       files = await readdir(currentDir, options);
     } catch (error) {
@@ -132,11 +136,12 @@ function fileInput(options, callback) {
   };
 
   // Transmit options to inputField()
-  options = Object.assign({}, options, {
+  options = {
+    ...options,
     autoComplete: autoCompleter,
     autoCompleteMenu: true,
     minLength: 1,
-  });
+  };
 
   term.inputField(options).promise.then(
     (input) => {
@@ -177,7 +182,7 @@ function readdir(dir, options) {
       }
 
       const filteredDirs =
-        files.filter((f) => f.isDirectory()).map((f) => f.name + "/") || [];
+        files.filter((f) => f.isDirectory()).map((f) => `${f.name}/`) || [];
 
       const filteredFiles =
         files

@@ -101,7 +101,7 @@ function createInnerRunner() {
         let result = "";
         let err = "";
         try {
-          screen(true);
+          screen({ running: true, path });
           subprocess = execa("node", ["-e", code], {
             cwd: dirname(path),
           });
@@ -110,8 +110,7 @@ function createInnerRunner() {
             result += str;
           });
           subprocess.stdout.on("end", () => {
-            term.clear();
-            screen(false);
+            screen({ running: false, path });
             term(`${result}\n`);
           });
           subprocess.stderr.on("data", (str) => {
@@ -121,7 +120,7 @@ function createInnerRunner() {
           await subprocess;
         } catch (error) {
           if (!isDisabled) {
-            screen(false);
+            screen({ running: false, path });
             term.red.bold("Error:\n\n");
             term.red(`- ${err}\n\n`);
             // eslint-disable-next-line no-await-in-loop
@@ -152,6 +151,7 @@ const createRunner = async () => {
           loader: "ts",
         })
         .then((value) => {
+          console.log(value);
           return runner.run(path, screen, `${powerConsole}\n\n${value.code}`);
         })
         .catch((e) => {
