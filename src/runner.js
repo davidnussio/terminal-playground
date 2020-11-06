@@ -19,8 +19,6 @@ const hasInspect =
 const inspect =
   when(hasInspect, x => x.inspect())
 
-
-
 console = ((clog) => {
 
   return {

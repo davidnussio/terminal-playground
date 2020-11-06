@@ -3,7 +3,7 @@ const path = require("path");
 const termkit = require("terminal-kit");
 const compose = require("crocks/helpers/compose");
 const tap = require("crocks/helpers/tap");
-const { statSync } = require("fs");
+const { statSync, existsSync } = require("fs");
 const fileInput = require("./fileInput");
 const createRunner = require("./runner");
 
@@ -13,6 +13,8 @@ const baseDir = path.resolve(process.argv[2] || process.cwd());
 
 const CHOOSE_FILE = Symbol("CHOOSE_FILE");
 const RUNNING = Symbol("RUNNING");
+
+const sleep = async (ms) => new Promise((res) => setTimeout(res, ms));
 
 const main = async (options) => {
   const runner = await createRunner();
@@ -68,12 +70,19 @@ const main = async (options) => {
         autoCompleteHint: true,
         minLength: 1,
       },
-      (error, input) => {
+      async (error, input) => {
         if (error) {
-          term.red.bold(`\nAn error occurs: ${error}\n`);
-        } else {
+          term.red.bold(`An error occurs: ${error}\n`);
+        } else if (existsSync(input)) {
           state.current = RUNNING;
           state.running.file = input;
+          callback();
+        } else {
+          term("\n\n");
+          term.red
+            .bold("File or directory does not exist:\n")
+            .bold(`💔 ${input}\n`);
+          await sleep(1000);
           callback();
         }
       }
