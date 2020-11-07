@@ -107,10 +107,11 @@ const main = async (options) => {
         return;
 
       case state.current === CHOOSE_FILE:
-        return compose(chooseFile(loop), header, term.clear)();
+        compose(chooseFile(loop), header, term.clear)();
+        return;
 
       default:
-        return compose(menu, header, term.clear)();
+        compose(menu, header, term.clear)();
     }
   };
 
