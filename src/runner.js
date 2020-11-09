@@ -53,14 +53,18 @@ console = ((clog) => {
 const installMissingDeps = async (err) => {
   return new Promise((res) => {
     const m = err.match(/Cannot find module '(.+)'/);
-    if (m.length > 1) {
+    if (m && m.length > 1) {
       const missingModuleName = m[1].replace(/\/.*$/, "");
       term("Do you want install '").bold(missingModuleName)("'? [Y|n]\n");
       term.yesOrNo({ yes: ["y", "ENTER"], no: ["n"] }, (error, result) => {
         if (result) {
           // const spinner = ora("Installing missing dependency...\n").start();
           term("Installing missing dependency...\n\n");
-          const subprocess = execa("npm", ["install", missingModuleName]);
+          const subprocess = execa("npm", [
+            "install",
+            "--no-save",
+            missingModuleName,
+          ]);
           // subprocess.stdout.on("data", term);
           subprocess.stdout.on("end", () => {
             // spinner.succeed();
@@ -68,31 +72,23 @@ const installMissingDeps = async (err) => {
             res(true);
           });
         } else {
-          term.red("'No' detected, are you sure?\n");
+          term.red("Fix dependecy manually and save file again!\n");
           res(false);
         }
       });
     } else {
-      res(false);
+      res(true);
     }
   });
 };
 
 function createInnerRunner() {
-  let isDisabled = false;
   let subprocess;
   return {
-    isDisabled() {
-      return isDisabled;
-    },
-    disable() {
-      isDisabled = true;
+    async run(path, screen, code) {
       if (subprocess) {
         subprocess.cancel();
       }
-    },
-    async run(path, screen, code) {
-      if (isDisabled) return;
       let reRun = false;
       do {
         reRun = false;
@@ -117,9 +113,9 @@ function createInnerRunner() {
           // eslint-disable-next-line no-await-in-loop
           await subprocess;
         } catch (error) {
-          if (!isDisabled) {
-            screen({ running: false, path });
-            term.red.bold("Error:\n\n");
+          screen({ running: false, path });
+          if (error.isCanceled === false) {
+            term.red.bold("--Error:\n\n");
             term.red(`- ${err}\n\n`);
             // eslint-disable-next-line no-await-in-loop
             reRun = await installMissingDeps(err);
