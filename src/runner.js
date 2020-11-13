@@ -130,6 +130,8 @@ const createRunner = async () => {
   const service = await startService();
   const runner = createInnerRunner();
 
+  let watcher;
+
   process.on("SIGTERM", () => service.stop());
 
   const executeFile = (screen) => (path) => {
@@ -145,7 +147,6 @@ const createRunner = async () => {
           loader: "ts",
         })
         .then((value) => {
-          console.log(value);
           return runner.run(path, screen, `${powerConsole}\n\n${value.code}`);
         })
         .catch((e) => {
@@ -155,11 +156,16 @@ const createRunner = async () => {
   };
 
   return (screen, paths) => {
+    if (watcher) {
+      watcher.close();
+    }
+
     if (fs.statSync(paths).isFile()) {
       executeFile(screen)(paths);
     }
 
-    const watcher = chokidar.watch(paths);
+    watcher = chokidar.watch(paths);
+
     try {
       // Call transform() many times without the overhead of starting a service
       watcher.on("change", executeFile(screen));
@@ -168,9 +174,7 @@ const createRunner = async () => {
       // The child process can be explicitly killed when it's no longer needed
       // service.stop();
     }
-    return () => {
-      watcher.close();
-    };
+    return () => {};
   };
 };
 

@@ -27,6 +27,7 @@
   "dependencies": {
     "chokidar": "3.4.3",
     "crocks": "0.12.4",
+    "effector": "21.6.2",
     "esbuild": "0.8.2",
     "execa": "4.1.0",
     "ora": "5.1.0",
