@@ -50,8 +50,8 @@ console = ((clog) => {
 })(console)
 `;
 
-const installMissingDeps = async (err) => {
-  return new Promise((res) => {
+const installMissingDeps = async (err) =>
+  new Promise((res) => {
     const m = err.match(/Cannot find module '(.+)'/);
     if (m && m.length > 1) {
       const missingModuleName = m[1].replace(/\/.*$/, "");
@@ -80,7 +80,6 @@ const installMissingDeps = async (err) => {
       res(true);
     }
   });
-};
 
 function createInnerRunner() {
   let subprocess;
@@ -146,9 +145,9 @@ const createRunner = async () => {
           format: "cjs",
           loader: "ts",
         })
-        .then((value) => {
-          return runner.run(path, screen, `${powerConsole}\n\n${value.code}`);
-        })
+        .then((value) =>
+          runner.run(path, screen, `${powerConsole}\n\n${value.code}`)
+        )
         .catch((e) => {
           term.red(e.message);
         });
