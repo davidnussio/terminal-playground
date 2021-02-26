@@ -23,10 +23,6 @@ store
     running: { file },
   }));
 
-store.watch((state) => {
-  console.log("state ... → ", state);
-});
-
 module.exports = {
   store,
   actions: { choseFileOperation, runningFile },

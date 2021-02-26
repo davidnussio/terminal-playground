@@ -77,7 +77,7 @@ const installMissingDeps = async (err) =>
         }
       });
     } else {
-      res(true);
+      res(false);
     }
   });
 
