@@ -6,6 +6,8 @@ Zero config transpile Javascript and Typescript on the fly with super performant
 
 It is very experimental tool, I was inspired by [hopa](https://github.com/krasimir/hopa) would be a zero conf runner for javascript and typescript.
 
+![Demo](https://media.giphy.com/media/8k5orH6KXGz63E7kmY/giphy.gif)
+
 ## Getting Started
 
 ### npx
