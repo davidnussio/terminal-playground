@@ -5,8 +5,6 @@ const compose = require("crocks/helpers/compose");
 
 const tap = require("crocks/helpers/tap");
 const { statSync, existsSync } = require("fs");
-const { guard } = require("effector");
-const { trace } = require("console");
 const fileInput = require("./fileInput");
 const createRunner = require("./runner");
 

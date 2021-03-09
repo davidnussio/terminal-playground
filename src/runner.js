@@ -31,10 +31,12 @@ console = ((clog) => {
             return '\x1b[1;34m' + arg + '\x1b[0m';
           } else if (typeof arg === 'boolean') {
             return '\x1b[1;36m' + arg + '\x1b[0m';
+          } else if (hasInspect(arg)) {
+            return '\x1b[1;35m' + inspect(arg) + '\x1b[0m';
           } else if (typeof args === 'object') {
             return JSON.stringify(arg, null, 2)
           } else {
-            return inspect(arg)
+            return args;
           }
         }
         if(!args.length) {
