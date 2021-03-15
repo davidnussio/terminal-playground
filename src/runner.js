@@ -64,7 +64,7 @@ const installMissingDeps = async (err) =>
           term("Installing missing dependency...\n\n");
           const subprocess = execa("npm", [
             "install",
-            "--no-save",
+            // "--no-save", // https://github.com/npm/cli/issues/1460
             missingModuleName,
           ]);
           // subprocess.stdout.on("data", term);
