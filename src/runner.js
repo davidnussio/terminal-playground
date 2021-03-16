@@ -99,9 +99,13 @@ function createInnerRunner() {
         let err = "";
         try {
           screen({ running: true, path });
-          subprocess = execa("node", ["-e", code], {
-            cwd: dirname(path),
-          });
+          subprocess = execa(
+            "node",
+            ["--experimental-modules", "--input-type=module", "-e", code],
+            {
+              cwd: dirname(path),
+            }
+          );
           subprocess.stdout.on("data", (str) => {
             term(str);
             result += str;
@@ -146,12 +150,13 @@ const createRunner = async () => {
       service
         .transform(data.toString(), {
           target: "node12",
-          format: "cjs",
+          format: "esm",
           loader: "ts",
         })
-        .then((value) =>
-          runner.run(path, screen, `${powerConsole}\n\n${value.code}`)
-        )
+        .then((value) => {
+          console.log(value.code);
+          runner.run(path, screen, `${powerConsole}\n\n${value.code}`);
+        })
         .catch((e) => {
           term.red(e.message);
         });
