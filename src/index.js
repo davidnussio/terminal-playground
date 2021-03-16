@@ -24,7 +24,18 @@ const menu = (opts) => {
   term.bold("Usage\n");
 
   term.brightBlack(" 🏃 Press").white(" r ").brightBlack("to run file\n");
-  // term.brightBlack(" 📑 Press").white(" ESC ").brightBlack("back to menu\n");
+  term
+    .brightBlack(" 📦 Press")
+    .white(" s ")
+    .brightBlack("Toggle npm install no save option: ")
+    .white(`npm install${opts.npmInstallNoSave ? " --no-save" : ""}\n`);
+  if (opts.npmInstallNoSave) {
+    term
+      .red(
+        "    ⚠️  with --no-save you can import only one package at time not included in package.json\n"
+      )
+      .brightBlack("       More https://github.com/npm/cli/issues/1460\n");
+  }
   term.brightBlack(" 🚪 Press").white(" CTRL + C ").brightBlack("to exit\n\n");
   return opts;
 };
@@ -48,9 +59,6 @@ const header = (opts) => {
 const currentFile = (baseDirPath, currentFilePath, isFile) => (
   opts = { running: false, path: undefined }
 ) => {
-  // if (opts === true) {
-  //   term.spinner("dotSpinner");
-  // }
   term(isFile ? "Running file: " : "Watching directory: ").bold(
     `${currentFilePath.replace(`${baseDirPath}/`, "")}\n\n`
   );
@@ -71,6 +79,7 @@ const currentFile = (baseDirPath, currentFilePath, isFile) => (
  * }} options
  */
 const main = async (options) => {
+  term.clear();
   const runner = await createRunner();
 
   const chooseFile = () => {
@@ -102,6 +111,7 @@ const main = async (options) => {
   };
 
   const loop = (state) => {
+    term.clear();
     switch (true) {
       case state.current === types.RUNNING:
         const isFile = statSync(state.running.file).isFile();
@@ -111,7 +121,7 @@ const main = async (options) => {
           header,
           tap(term.clear)
         );
-        runningScreen();
+        runningScreen(state);
         runner(runningScreen, state.running.file);
         return;
 
@@ -126,12 +136,14 @@ const main = async (options) => {
 
   term.on("key", (key /*  matches, data */) => {
     // Running file in watch mode
-    if (
-      (key === "r" || key === "R") &&
-      store.getState().current !== types.CHOOSE_FIL
-    ) {
+    const notChoosingFile = store.getState().current !== types.CHOOSE_FILE;
+    if (["r", "R"].includes(key) && notChoosingFile) {
       actions.choseFileOperation();
       // guard({})
+    }
+
+    if (["s", "S"].includes(key) && notChoosingFile) {
+      actions.toggleNpmInstallSaveOpt();
     }
 
     // Detect CTRL-C and exit 'manually'

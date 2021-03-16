@@ -4,6 +4,8 @@ const chokidar = require("chokidar");
 const term = require("terminal-kit").terminal;
 const execa = require("execa");
 const { startService } = require("esbuild");
+
+const { store } = require("./store");
 // const ora = require("ora");
 
 const powerConsole = `
@@ -57,14 +59,14 @@ const installMissingDeps = async (err) =>
     const m = err.match(/Cannot find module '(.+)'/);
     if (m && m.length > 1) {
       const missingModuleName = m[1].replace(/\/.*$/, "");
-      term("Do you want install '").bold(missingModuleName)("'? [Y|n]\n");
+      term(`Do you want install `).bold(missingModuleName)("'? [Y|n]\n");
       term.yesOrNo({ yes: ["y", "ENTER"], no: ["n"] }, (error, result) => {
         if (result) {
           // const spinner = ora("Installing missing dependency...\n").start();
           term("Installing missing dependency...\n\n");
           const subprocess = execa("npm", [
             "install",
-            // "--no-save", // https://github.com/npm/cli/issues/1460
+            store.getState().npmInstallNoSave && "--no-save", // https://github.com/npm/cli/issues/1460
             missingModuleName,
           ]);
           // subprocess.stdout.on("data", term);

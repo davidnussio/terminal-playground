@@ -5,10 +5,12 @@ const RUNNING = Symbol("RUNNING");
 
 const choseFileOperation = createEvent();
 const runningFile = createEvent();
+const toggleNpmInstallSaveOpt = createEvent();
 
 const store = createStore({
   current: CHOOSE_FILE,
   running: { file: undefined },
+  npmInstallNoSave: false,
 });
 
 store
@@ -21,10 +23,14 @@ store
     ...state,
     current: RUNNING,
     running: { file },
+  }))
+  .on(toggleNpmInstallSaveOpt, (state) => ({
+    ...state,
+    npmInstallNoSave: !state.npmInstallNoSave,
   }));
 
 module.exports = {
   store,
-  actions: { choseFileOperation, runningFile },
+  actions: { choseFileOperation, runningFile, toggleNpmInstallSaveOpt },
   types: { CHOOSE_FILE, RUNNING },
 };
