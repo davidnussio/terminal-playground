@@ -6,8 +6,6 @@ Zero config transpile Javascript and Typescript on the fly with super performant
 
 Run `npx terminal-playground` and choose a file or directory and starting save TS or JS files.
 
-![Demo](https://raw.githubusercontent.com/davidnussio/terminal-playground/master/images/demo.gif)
-
 ![Demo](https://raw.githubusercontent.com/davidnussio/terminal-playground/master/images/multifiles-js-ts.gif)
 
 ![Demo](https://raw.githubusercontent.com/davidnussio/terminal-playground/master/images/terminal-playground.gif)
